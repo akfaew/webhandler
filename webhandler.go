@@ -22,6 +22,8 @@ var (
 	TemplateError = "error.html"
 )
 
+var ErrorContextFunc func(message string) interface{} = nil
+
 type WebHandler func(http.ResponseWriter, *http.Request) *WebError
 
 type WebTemplate struct {
@@ -68,10 +70,9 @@ func (fn WebHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		// Error for the user
 		tmpl := template.Must(template.ParseFiles(TemplateDir + TemplateError))
 		buf := new(bytes.Buffer)
-		vars := struct {
-			Message string
-		}{
-			Message: e.Message,
+		var vars interface{}
+		if ErrorContextFunc != nil {
+			vars = ErrorContextFunc(e.Message)
 		}
 		if err := tmpl.Execute(buf, vars); err != nil {
 			LogErrorfd(ctx, "err=%v", err)
