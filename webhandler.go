@@ -68,7 +68,12 @@ func (fn WebHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Error for the user
-		tmpl := template.Must(template.ParseFiles(TemplateDir + TemplateError))
+		tmpl, err := template.ParseFiles(TemplateDir + TemplateError)
+		if err != nil { // if TemplateError does not exist
+			http.Error(w, e.Message, e.Code)
+			return
+		}
+
 		buf := new(bytes.Buffer)
 		var vars interface{}
 		if ErrorContextFunc != nil {
