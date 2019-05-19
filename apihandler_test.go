@@ -33,13 +33,13 @@ func TestAPIHandler(t *testing.T) {
 		req, err := Inst.NewRequest(http.MethodGet, "/success", nil)
 		test.NoError(t, err)
 
-		HTTPGet(apiRouter(), t, req).Fixture()
+		HTTPGetRouter(apiRouter(), t, req).Fixture()
 	})
 
 	t.Run("Failure", func(t *testing.T) {
 		req, err := Inst.NewRequest(http.MethodGet, "/failure", nil)
 		test.NoError(t, err)
 
-		HTTPGet(apiRouter(), t, req).Fixture()
+		HTTPGetRouter(apiRouter(), t, req).Fixture()
 	})
 }
