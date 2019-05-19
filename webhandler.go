@@ -55,8 +55,9 @@ func ParseTemplate(filename string) *WebTemplate {
 
 // ServeHTTP renders an error template and logs the failure if a problem occurs.
 func (fn WebHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	ctx := appengine.NewContext(r)
 	if e := fn(w, r); e != nil { // e is *WebError, not os.Error.
+		ctx := appengine.NewContext(r)
+
 		// Log for the site admin
 		switch e.Code / 100 {
 		case 4:
