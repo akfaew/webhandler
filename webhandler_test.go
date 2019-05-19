@@ -10,36 +10,43 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func webSuccess(w http.ResponseWriter, r *http.Request) *WebError {
-	return nil
-}
+var simple = ParseTemplate("simple.html")
+var failure = ParseTemplate("simple.html")
 
-func webFailure(w http.ResponseWriter, r *http.Request) *WebError {
-	return NewAPIError(http.StatusInternalServerError, fmt.Errorf("ooups"))
+func webContext(r *http.Request, tmpl *WebTemplate) (interface{}, *WebError) {
+	if tmpl == failure {
+		return nil, WebErrorf(http.StatusInternalServerError, fmt.Errorf("ooups"), "User error")
+	}
+
+	return struct {
+		Title string
+	}{
+		Title: "Template Title",
+	}, nil
 }
 
 func webRouter() *mux.Router {
 	r := mux.NewRouter()
 	r.StrictSlash(true)
 
-	WebHandle(r, http.MethodGet, "/success", apiSuccess)
-	WebHandle(r, http.MethodGet, "/failure", apiFailure)
+	WebHandle(r, http.MethodGet, "/success", simple.Executor(webContext))
+	WebHandle(r, http.MethodGet, "/failure", failure.Executor(webContext))
 
 	return r
 }
 
-func TestAPIHandler(t *testing.T) {
+func TestWebHandler(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		req, err := Inst.NewRequest(http.MethodGet, "/success", nil)
 		test.NoError(t, err)
 
-		HTTPGet(APIRouter(), t, req).Fixture()
+		HTTPGet(webRouter(), t, req).Fixture()
 	})
 
 	t.Run("Failure", func(t *testing.T) {
 		req, err := Inst.NewRequest(http.MethodGet, "/failure", nil)
 		test.NoError(t, err)
 
-		HTTPGet(APIRouter(), t, req).Fixture()
+		HTTPGet(webRouter(), t, req).Fixture()
 	})
 }
