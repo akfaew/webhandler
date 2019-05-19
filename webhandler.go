@@ -1,4 +1,6 @@
-// Package webhandler provides utilities for serving HTML pages with AppEngine and html/template
+// Package webhandler provides utilities for serving HTML pages with AppEngine and html/template.
+//
+// Additionally, utilities for communicating with APIs are provided (no user error reporting).
 package webhandler
 
 import (
