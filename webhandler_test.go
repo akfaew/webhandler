@@ -25,9 +25,19 @@ func webContext(r *http.Request, tmpl *WebTemplate) (interface{}, *WebError) {
 	}, nil
 }
 
+func errorContext(message string) interface{} {
+	return struct {
+		Message string
+	}{
+		Message: message,
+	}
+}
+
 func webRouter() *mux.Router {
 	r := mux.NewRouter()
 	r.StrictSlash(true)
+
+	ErrorContextFunc = errorContext
 
 	WebHandle(r, http.MethodGet, "/success", simple.Executor(webContext))
 	WebHandle(r, http.MethodGet, "/failure", failure.Executor(webContext))
