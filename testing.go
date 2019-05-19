@@ -11,48 +11,48 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type Response struct {
-	t        *testing.T
-	Response *httptest.ResponseRecorder
+type WebTestResponse struct {
+	t                *testing.T
+	ResponseRecorder *httptest.ResponseRecorder
 }
 
 // Use like this:
 //
-// func HTTPGet(t *testing.T, req *http.Request) *Response {
+// func HTTPGet(t *testing.T, req *http.Request) *WebTestResponse {
 // 	return webhandler.HTTPGetRouter(t, Router(), req)
 // }
-func HTTPGetRouter(t *testing.T, router *mux.Router, req *http.Request) *Response {
+func HTTPGetRouter(t *testing.T, router *mux.Router, req *http.Request) *WebTestResponse {
 	t.Helper()
 
 	res := httptest.NewRecorder()
 	router.ServeHTTP(res, req)
 
-	return &Response{
-		t:        t,
-		Response: res,
+	return &WebTestResponse{
+		t:                t,
+		ResponseRecorder: res,
 	}
 }
 
-func (r *Response) Fixture() {
+func (r *WebTestResponse) Fixture() {
 	r.t.Helper()
 
 	r.FixtureExtra("")
 }
 
-func (r *Response) FixtureExtra(extra string) {
+func (r *WebTestResponse) FixtureExtra(extra string) {
 	r.t.Helper()
 
-	body, err := ioutil.ReadAll(r.Response.Body)
+	body, err := ioutil.ReadAll(r.ResponseRecorder.Body)
 	test.NoError(r.t, err)
 
-	code := fmt.Sprintf("Code: %d\n\n", r.Response.Code)
+	code := fmt.Sprintf("Code: %d\n\n", r.ResponseRecorder.Code)
 	test.FixtureExtra(r.t, extra, code+string(body))
 }
 
-func (r *Response) Status(want int) {
+func (r *WebTestResponse) Status(want int) {
 	r.t.Helper()
 
-	if r.Response.Code != want {
-		r.t.Fatalf("Status Code == %d (expected %d)", r.Response.Code, want)
+	if r.ResponseRecorder.Code != want {
+		r.t.Fatalf("Status Code == %d (expected %d)", r.ResponseRecorder.Code, want)
 	}
 }
