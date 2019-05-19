@@ -16,7 +16,12 @@ type Response struct {
 	Response *httptest.ResponseRecorder
 }
 
-func HTTPGetRouter(router *mux.Router, t *testing.T, req *http.Request) *Response {
+// Use like this:
+//
+// func HTTPGet(t *testing.T, req *http.Request) *Response {
+// 	return webhandler.HTTPGetRouter(t, Router(), req)
+// }
+func HTTPGetRouter(t *testing.T, router *mux.Router, req *http.Request) *Response {
 	t.Helper()
 
 	res := httptest.NewRecorder()

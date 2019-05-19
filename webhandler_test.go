@@ -50,13 +50,13 @@ func TestWebHandler(t *testing.T) {
 		req, err := Inst.NewRequest(http.MethodGet, "/success", nil)
 		test.NoError(t, err)
 
-		HTTPGetRouter(webRouter(), t, req).Fixture()
+		HTTPGetRouter(t, webRouter(), req).Fixture()
 	})
 
 	t.Run("Failure", func(t *testing.T) {
 		req, err := Inst.NewRequest(http.MethodGet, "/failure", nil)
 		test.NoError(t, err)
 
-		HTTPGetRouter(webRouter(), t, req).Fixture()
+		HTTPGetRouter(t, webRouter(), req).Fixture()
 	})
 }
