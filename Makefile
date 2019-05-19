@@ -6,6 +6,11 @@ fmt:
 test: fmt
 	go test $(TEST_ARGS) ./...
 
+test-regen:
+	rm -rf testdata/output
+	mkdir -p testdata/output
+	go test $(TEST_ARGS) -regen .
+
 test-cover: fmt
 	go test $(TEST_ARGS) -coverprofile=coverage.out ./...
 	go tool cover -func=coverage.out

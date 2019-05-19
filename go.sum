@@ -1,5 +1,7 @@
 github.com/akfaew/aeutils v1.0.0 h1:dmpmG7z5o//3Kx31IG69ldJMaVYjBQgGX8qTSb4aEkM=
 github.com/akfaew/aeutils v1.0.0/go.mod h1:RlBzh94OmpM8hx/wwg82atJV9wD6oYoCTMvduJdUaL4=
+github.com/akfaew/test v1.0.4 h1:SVLyz75gvpDq9CZypn7b9KXTg7JMpTFLMg3n3353wbw=
+github.com/akfaew/test v1.0.4/go.mod h1:W0czkPcrCL2YBWuhEeI0uHDVMkKXWubVnVDnI701JN8=
 github.com/golang/protobuf v1.2.0 h1:P3YflyNX/ehuJFLhxviNdFxQPkGK5cDcApsge1SqnvM=
 github.com/golang/protobuf v1.2.0/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
 github.com/gorilla/mux v1.7.1 h1:Dw4jY2nghMMRsh1ol8dv1axHkDwMQK2DHerMNJsIpJU=

@@ -27,7 +27,7 @@ func (fn APIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		ctx := appengine.NewContext(r)
 
 		LogErrorf(ctx, "Handler returned code %d with error %v.", e.Code, e.Error)
-		http.Error(w, "", e.Code)
+		http.Error(w, http.StatusText(e.Code), e.Code)
 	}
 }
 
