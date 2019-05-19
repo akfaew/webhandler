@@ -33,7 +33,7 @@ type WebTemplate struct {
 type Templates map[string]*WebTemplate
 
 type WebError struct {
-	Code    int
+	Code    int    // HTTP response code
 	Error   error  // for the logs
 	Message string // for the user
 }
