@@ -60,14 +60,16 @@ func (fn WebHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if e := fn(w, r); e != nil { // e is *WebError, not os.Error.
 		ctx := appengine.NewContext(r)
 
-		// Log for the site admin
-		switch e.Code / 100 {
-		case 4:
-			LogInfof(ctx, "Handler error %d. err=\"%v\", msg=\"%s\"",
-				e.Code, e.Error, e.Message)
-		default:
-			LogErrorf(ctx, "Handler error %d. err=\"%v\", msg=\"%s\"",
-				e.Code, e.Error, e.Message)
+		// Log for the site admin. No logging occurs if no error is passed.
+		if e.Error != nil || len(e.Message) > 0 {
+			switch e.Code / 100 {
+			case 4:
+				LogInfof(ctx, "Handler error %d. err=\"%v\", msg=\"%s\"",
+					e.Code, e.Error, e.Message)
+			default:
+				LogErrorf(ctx, "Handler error %d. err=\"%v\", msg=\"%s\"",
+					e.Code, e.Error, e.Message)
+			}
 		}
 
 		// Error for the user
