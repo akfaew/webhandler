@@ -12,10 +12,13 @@ import (
 
 var simple = ParseTemplate("simple.html")
 var failure = ParseTemplate("simple.html")
+var nolog = ParseTemplate("simple.html")
 
 func webContext(r *http.Request, tmpl *WebTemplate) (interface{}, *WebError) {
 	if tmpl == failure {
 		return nil, WebErrorf(http.StatusInternalServerError, fmt.Errorf("ooups"), "User error")
+	} else if tmpl == nolog {
+		return nil, WebErrorf(http.StatusInternalServerError, nil, "")
 	}
 
 	return struct {
@@ -41,6 +44,7 @@ func webRouter() *mux.Router {
 
 	WebHandle(r, http.MethodGet, "/success", simple.Executor(webContext))
 	WebHandle(r, http.MethodGet, "/failure", failure.Executor(webContext))
+	WebHandle(r, http.MethodGet, "/nolog", nolog.Executor(webContext))
 
 	return r
 }
@@ -55,6 +59,13 @@ func TestWebHandler(t *testing.T) {
 
 	t.Run("Failure", func(t *testing.T) {
 		req, err := Inst.NewRequest(http.MethodGet, "/failure", nil)
+		test.NoError(t, err)
+
+		HTTPGetRouter(t, webRouter(), req).Fixture()
+	})
+
+	t.Run("No Log", func(t *testing.T) {
+		req, err := Inst.NewRequest(http.MethodGet, "/nolog", nil)
 		test.NoError(t, err)
 
 		HTTPGetRouter(t, webRouter(), req).Fixture()
