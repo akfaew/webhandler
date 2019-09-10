@@ -49,10 +49,18 @@ func WebErrorf(code int, err error, format string, v ...interface{}) *WebError {
 }
 
 // ParseTemplate parses the template nesting it in the base template
-func ParseTemplate(filename string) *WebTemplate {
-	tmpl := template.Must(template.ParseFiles(TemplateDir+TemplateBase, TemplateDir+filename))
+func ParseTemplate(filenames ...string) *WebTemplate {
+	if len(filenames) == 0 {
+		return nil
+	}
 
-	return &WebTemplate{tmpl.Lookup(TemplateBase)}
+	paths := []string{}
+	for _, f := range filenames {
+		paths = append(paths, TemplateDir+f)
+	}
+	tmpl := template.Must(template.ParseFiles(paths...))
+
+	return &WebTemplate{tmpl.Lookup(filenames[0])}
 }
 
 // ServeHTTP renders an error template and logs the failure if a problem occurs.
