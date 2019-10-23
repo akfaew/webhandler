@@ -13,13 +13,16 @@ import (
 var simple = ParseTemplate("base.html", "simple.html")
 var failure = ParseTemplate("base.html", "simple.html")
 var nolog = ParseTemplate("base.html", "simple.html")
+var redirect = ParseTemplate("base.html", "simple.html")
 var nobase = ParseTemplate("nobase.html")
 
-func webContext(r *http.Request, tmpl *WebTemplate) (interface{}, *WebError) {
+func webContext(w http.ResponseWriter, r *http.Request, tmpl *WebTemplate) (interface{}, *WebError) {
 	if tmpl == failure {
 		return nil, WebErrorf(http.StatusInternalServerError, fmt.Errorf("ooups"), "User error")
 	} else if tmpl == nolog {
 		return nil, WebErrorf(http.StatusInternalServerError, nil, "")
+	} else if tmpl == redirect {
+		http.Redirect(w, r, "/redirect_target", http.StatusFound)
 	}
 
 	return struct {
@@ -47,6 +50,7 @@ func webRouter() *mux.Router {
 	WebHandle(r, http.MethodGet, "/failure", failure.Executor(webContext))
 	WebHandle(r, http.MethodGet, "/nolog", nolog.Executor(webContext))
 	WebHandle(r, http.MethodGet, "/nobase", nobase.Executor(webContext))
+	WebHandle(r, http.MethodGet, "/redirect", redirect.Executor(webContext))
 
 	return r
 }
@@ -75,6 +79,13 @@ func TestWebHandler(t *testing.T) {
 
 	t.Run("No Base", func(t *testing.T) {
 		req, err := Inst.NewRequest(http.MethodGet, "/nobase", nil)
+		test.NoError(t, err)
+
+		HTTPGetRouter(t, webRouter(), req).Fixture()
+	})
+
+	t.Run("Redirect", func(t *testing.T) {
+		req, err := Inst.NewRequest(http.MethodGet, "/redirect", nil)
 		test.NoError(t, err)
 
 		HTTPGetRouter(t, webRouter(), req).Fixture()

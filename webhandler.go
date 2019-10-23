@@ -112,10 +112,10 @@ func WebHandle(r *mux.Router, method string, path string, handler func(w http.Re
 }
 
 // Executor uses webContext() to obtain a list of variables to pass to the underlying html template.
-func (tmpl *WebTemplate) Executor(webContext func(*http.Request, *WebTemplate) (interface{}, *WebError)) func(http.ResponseWriter, *http.Request) *WebError {
+func (tmpl *WebTemplate) Executor(webContext func(http.ResponseWriter, *http.Request, *WebTemplate) (interface{}, *WebError)) func(http.ResponseWriter, *http.Request) *WebError {
 	return func(w http.ResponseWriter, r *http.Request) *WebError {
 		// Get the web context
-		vars, weberr := webContext(r, tmpl)
+		vars, weberr := webContext(w, r, tmpl)
 		if weberr != nil {
 			return weberr
 		}
