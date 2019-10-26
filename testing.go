@@ -2,7 +2,6 @@ package webhandler
 
 import (
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -33,6 +32,10 @@ func HTTPGetRouter(t *testing.T, router *mux.Router, req *http.Request) *WebTest
 	}
 }
 
+func (r *WebTestResponse) Body() string {
+	return r.ResponseRecorder.Body.String()
+}
+
 func (r *WebTestResponse) Fixture() {
 	r.t.Helper()
 
@@ -42,11 +45,8 @@ func (r *WebTestResponse) Fixture() {
 func (r *WebTestResponse) FixtureExtra(extra string) {
 	r.t.Helper()
 
-	body, err := ioutil.ReadAll(r.ResponseRecorder.Body)
-	test.NoError(r.t, err)
-
 	code := fmt.Sprintf("Code: %d\n\n", r.ResponseRecorder.Code)
-	test.FixtureExtra(r.t, extra, code+string(body))
+	test.FixtureExtra(r.t, extra, code+r.Body())
 }
 
 func (r *WebTestResponse) Status(want int) {

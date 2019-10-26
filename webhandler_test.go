@@ -68,6 +68,7 @@ func TestWebHandler(t *testing.T) {
 		test.NoError(t, err)
 
 		HTTPGetRouter(t, webRouter(), req).Fixture()
+		HTTPGetRouter(t, webRouter(), req).Status(http.StatusInternalServerError)
 	})
 
 	t.Run("No Log", func(t *testing.T) {
